@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+	<!-- shims -->
+	<script src="midi-js/inc/shim/Base64.js" type="text/javascript"></script>
+	<script src="midi-js/inc/shim/Base64binary.js" type="text/javascript"></script>
+	<script src="midi-js/inc/shim/WebAudioAPI.js" type="text/javascript"></script>
+
+	<!-- midi.js -->
+	<script src="midi-js/js/midi/audioDetect.js" type="text/javascript"></script>
+	<script src="midi-js/js/midi/gm.js" type="text/javascript"></script>
+	<script src="midi-js/js/midi/loader.js" type="text/javascript"></script>
+	<script src="midi-js/js/midi/plugin.audiotag.js" type="text/javascript"></script>
+	<script src="midi-js/js/midi/plugin.webaudio.js" type="text/javascript"></script>
+	<script src="midi-js/js/midi/plugin.webmidi.js" type="text/javascript"></script>
+
+	<!-- utils -->
+	<script src="midi-js/js/util/dom_request_xhr.js" type="text/javascript"></script>
+	<script src="midi-js/js/util/dom_request_script.js" type="text/javascript"></script>
+
+    <title>COMP4431 Multimedia Computing - MIDI Keyboard</title>
+
+    <style>
+      body { min-width: 590px; }
+      .container { min-width: 590px; width: 760px; margin-top: 10px }
+      .keyboard { float: left; position: relative; width: 762px; height: 252px; border: 1px solid lightgray; background: lightgray; }
+      .white-keys, .black-keys { position: absolute; }
+      .white-key, .black-key { float: left; border-radius: 4px; }
+      .white-key { width: 40px; height: 250px; border: 1px solid gray; background: white; line-height: 460px; }
+      .black-key { margin: 0 5px; width: 30px; height: 160px; border: 1px solid black; background: black; color: white; line-height: 280px; }
+      .spacer { width: 20px; float: left; }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-dark bg-dark navbar-fixed-top">
+        <div class="navbar-header">
+            <span class="navbar-brand">MIDI Keyboard Project</span>
+        </div>
+    </nav>
+
+    <div class="container">
+
+      <!-- Here are the controls -->
+      <div class="row mb-2">
+        <div class="col-6">
+          <label for="amplitude">MIDI Amplitude:</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text">0</span>
+            </div>
+            <div class="row flex-fill align-items-center mx-0 px-2 border">
+              <input class="custom-range" id="amplitude" type="range" value="100" min="0" max="127">
+            </div>
+            <div class="input-group-append">
+              <span class="input-group-text">127</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-6">
+          <label for="lowestPitch">Lowest MIDI Pitch:</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text">21</span>
+            </div>
+            <div class="row flex-fill align-items-center mx-0 px-2 border">
+              <input class="custom-range" id="lowestPitch" type="range" value="60" min="21" max="77">
+            </div>
+            <div class="input-group-append">
+              <span class="input-group-text">77</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-4">
+        <div class="col-6">
+          <label for="chordType">Play Mode:</label>
+          <div class="input-group">
+            <!--<div class="row flex-fill align-items-center mx-0 px-2 border">-->
+				<div class="btn-group btn-group-toggle" data-toggle="buttons">
+                      <label class="btn btn-primary active">
+                        <input type="radio" name="play-mode" id="play-mode-single" value="single" autocomplete="off" checked="">
+                        Single Note
+                      </label>
+                      <label class="btn btn-primary">
+                        <input type="radio" name="play-mode" id="play-mode-major" value="major" autocomplete="off">
+                        Major Chord
+                      </label>
+                      <label class="btn btn-primary">
+                        <input type="radio" name="play-mode" id="play-mode-minor" value="minor" autocomplete="off">
+                        Minor Chord
+                      </label>
+                    </div>
+            <!--</div>-->
+          </div>
+        </div>
+        <div class="col-6">
+          <label for="lowestPitch">Instrument:</label>
+          <div class="input-group">
+				<select class="custom-select" id="instrumentSelect">
+					<option value="56">Trumpet</option>
+					<option value="0">Acoustic Grand Piano</option>
+					<option value="65">Alto Sax</option>
+					<option value="40">Violin</option>
+					<option value="42">Cello</option>
+					<option value="24">Acoustic Guitar (nylon)</option>
+					<option value="32">Acoustic Bass</option>
+					<option value="48">String Ensemble 1</option>
+					<option value="73">Flute</option>
+					<option value="71">Clarinet</option>
+					
+				</select>
+          </div>
+        </div>
+      </div>
+	<div class="row mb-6">
+		<div class="col-6">
+			<label for="record">Recording:</label>
+				<div class="input-group">
+				<div class="btn-group btn-group-toggle" data-toggle="buttons">
+					<label class="btn btn-primary">
+						<input type="radio" name="recording" id="record-on" value="off" autocomplete="off">
+						On
+					</label>
+					<label class="btn btn-primary active">
+						<input type="radio" name="recording" id="record-off" value="on" autocomplete="off" checked="">
+						Off
+					</label>
+				</div>
+			</div>
+		</div>
+		<div class="col-6">
+			<label for="importexport">Import/Export:</label>
+				<div class="input-group">
+					<button name="exportbutton" class="btn btn-primary">Export</button>
+					<button name="importbutton" class="btn btn-primary">Import</button>
+				</div>
+		</div>
+	</div>
+	<p></p>
+      <div class="keyboard">
+        <!-- First we draw the white keys -->
+        <div class="white-keys">
+			<button type="button" class="white-key" id="key-0">z</button>
+			<button type="button" class="white-key" id="key-2">x</button>
+			<button type="button" class="white-key" id="key-4">c</button>
+			<button type="button" class="white-key" id="key-5">v</button>
+			<button type="button" class="white-key" id="key-7">b</button>
+			<button type="button" class="white-key" id="key-9">n</button>
+			<button type="button" class="white-key" id="key-11">m</button>
+			<button type="button" class="white-key" id="key-12">q</button>
+			<button type="button" class="white-key" id="key-14">w</button>
+			<button type="button" class="white-key" id="key-16">e</button>
+			<button type="button" class="white-key" id="key-17">r</button>
+			<button type="button" class="white-key" id="key-19">t</button>
+			<button type="button" class="white-key" id="key-21">y</button>
+			<button type="button" class="white-key" id="key-23">u</button>
+			<button type="button" class="white-key" id="key-24">i</button>
+			<button type="button" class="white-key" id="key-26">o</button>
+			<button type="button" class="white-key" id="key-28">p</button>
+			<button type="button" class="white-key" id="key-29">[</button>
+			<button type="button" class="white-key" id="key-31">]</button>
+        </div>
+
+        <!-- Now we draw the black keys, so they appear on top of the white keys
+        (in a web page, things included later are normally shown on top of things included earlier) -->
+        <div class="black-keys">
+			<div class="spacer">&nbsp;</div>
+			<button type="button" class="black-key" id="key-1">s</button>
+			<button type="button" class="black-key" id="key-3">d</button>
+			
+			<div class="spacer">&nbsp;</div>
+			<div class="spacer">&nbsp;</div>
+			<button type="button" class="black-key" id="key-6">g</button>
+			<button type="button" class="black-key" id="key-8">h</button>
+			<button type="button" class="black-key" id="key-10">j</button>
+			
+			<div class="spacer">&nbsp;</div>
+			<div class="spacer">&nbsp;</div>
+			<button type="button" class="black-key" id="key-13">2</button>
+			<button type="button" class="black-key" id="key-15">3</button>
+			<div class="spacer">&nbsp;</div>
+			<div class="spacer">&nbsp;</div>
+			<button type="button" class="black-key" id="key-18">5</button>
+			<button type="button" class="black-key" id="key-20">6</button>
+			<button type="button" class="black-key" id="key-22">7</button>
+			<div class="spacer">&nbsp;</div>
+			<div class="spacer">&nbsp;</div>
+			<button type="button" class="black-key" id="key-25">9</button>
+			<button type="button" class="black-key" id="key-27">0</button>
+			<div class="spacer">&nbsp;</div>
+			<div class="spacer">&nbsp;</div>
+			<button type="button" class="black-key" id="key-30">=</button>
+        </div>
+      </div>
+	  
+	  
+		<div class="outputcanvas">
+			<canvas id="output" width="760" height="400"></canvas>
+		</div>
+
+    </div>
+
+    <!--
+    <div class="modal fade" id="loading" tabindex="-1" role="dialog" aria-labelledby="loading">
+      <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+          <div class="modal-body text-center">
+            <div class="spinner-border" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+            <p id="status" class="pt-4">Loading MIDI instruments...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    -->
+
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+    <!-- the lab JavaScript -->
+	<script src="lab01.js" type="text/javascript"></script>
+	<script src="pianorollrecording.js" type="text/javascript"></script>
+
+  </body>
+</html>
