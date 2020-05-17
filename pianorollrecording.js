@@ -116,7 +116,7 @@ const processJSON = async(json) => {
 		json[i].duration = json[i].duration *tempo;
 		console.log(json[i].duration);
 		pressed[json[i].pitch - lowestPitch] = true;
-		var inst = document.getElementById("instrumentSelect").value;
+		var inst = parseInt($("#instrumentSelect").val());
 		MIDI.programChange(0,inst);
 		var vel = document.getElementById("velocity").value;
 		MIDI.noteOn(0, json[i].pitch, vel);
