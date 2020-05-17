@@ -80,6 +80,7 @@ function exportRecorded(){
 
 function playImported() {
 	var files = document.getElementById("impJson").files;
+	var path = files[0].name;
 	var midiData = [];
 	if (files.length !== 0) {
 		var reader = new FileReader();
@@ -113,12 +114,31 @@ const processJSON = async(json) => {
 	for (var i = 0; i < json.length; ++i) {
 		pressed[json[i].pitch - lowestPitch] = true;
 		MIDI.noteOn(0, json[i].pitch, json[i].vol);
+		var jump = false;
+		if (json[i].type === 1 || json[i].type === 2) {
+			MIDI.noteOn(0, json[i + 1].pitch, json[i].vol);
+			MIDI.noteOn(0, json[i + 2].pitch, json[i].vol);
+			pressed[json[i + 1].pitch - lowestPitch] = true;
+			pressed[json[i + 2].pitch - lowestPitch] = true;
+			jump = true;
+		}
 		await delay(json[i].duration);
 		pressed[json[i].pitch - lowestPitch] = false;
 		MIDI.noteOff(0, json[i].pitch);
-		if (i < json.length - 1) {
-			await delay(json[i + 1].start - json[i].start - json[i].duration);
+
+		if (json[i].type === 1 || json[i].type === 2) {
+			MIDI.noteOff(0, json[i + 1].pitch);
+			MIDI.noteOff(0, json[i + 2].pitch);
+			pressed[json[i + 1].pitch - lowestPitch] = false;
+			pressed[json[i + 2].pitch - lowestPitch] = false;
 		}
+		if (i < json.length - 1) {
+			if (jump && i < json.length - 3) {
+				await delay(json[i + 3].start - json[i].start - json[i].duration);
+			}
+			else await delay(json[i + 1].start - json[i].start - json[i].duration);
+		}
+		if (jump) i += 2;
 	}
 	playing = false;
 }

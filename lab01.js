@@ -22,28 +22,40 @@ var recording = false; //Keeps track of whether we are recording right now or no
 function handleNoteOn(key_number) {
 if (pressed[key_number]) return;
   // Find the pitch
+  const push = (amplitude, pitch, timeStamp, duration, type) => {
+    recorded.push({'vol': amplitude, 'pitch': pitch, 'start': timeStamp, 'duration': duration, 'type': type})
+  };
   var pitch = parseInt($("#lowestPitch").val()) + key_number;
   var amplitude = parseInt($("#amplitude").val());
+  var timeStamp = performance.now()
   MIDI.noteOn(0, pitch, amplitude);
   pressed[key_number] = true;
-  if (recording)	 {recorded.push({'vol': amplitude, 'pitch': pitch, 'start': performance.now(), 'duration': 0})}
+  if (recording) push(amplitude, pitch, timeStamp, 0, document.getElementById("play-mode-major").checked ? 1 : (document.getElementById("play-mode-minor").checked ? 2 : 0));
     /*
     * You need to handle the chord mode here
     */
   if (document.getElementById("play-mode-major").checked) {
-    if (pitch+4 <= 108)
+    if (pitch+4 <= 108) {
       MIDI.noteOn(0, pitch + 4, amplitude);
       pressed[key_number+4] = true;
-    if (pitch+7 <= 108)
+      if (recording) push(amplitude, pitch + 4, timeStamp, 0, 1);
+    }
+    if (pitch+7 <= 108) {
       MIDI.noteOn(0, pitch + 7, amplitude);
       pressed[key_number+7] = true;
+      if (recording) push(amplitude, pitch + 7, timeStamp, 0, 1);
+    }
   } else if (document.getElementById("play-mode-minor").checked) {
-    if (pitch+3 <= 108)
+    if (pitch+3 <= 108) {
       MIDI.noteOn(0, pitch + 3, amplitude);
       pressed[key_number+3] = true;
-    if (pitch+7 <= 108)
+      if (recording) push(amplitude, pitch + 3, timeStamp, 0, 2);
+    }
+    if (pitch+7 <= 108) {
       MIDI.noteOn(0, pitch + 7, amplitude);
       pressed[key_number+7] = true;
+      if (recording) push(amplitude, pitch + 7, timeStamp, 0, 2);
+    }
   }
 }
 
@@ -51,45 +63,52 @@ function handleNoteOff(key_number) {
   if (!pressed[key_number]) return;
 
     // Find the pitch
-    var pitch = parseInt($("#lowestPitch").val()) + key_number;
+  var pitch = parseInt($("#lowestPitch").val()) + key_number;
     /*
     * You need to use the slider to get the lowest pitch number above
     * rather than the hardcoded value
     */
-
+  const curTime = performance.now();
+  const fetchPitch = (pitch) => {
+      var i;
+      for (i = recorded.length - 1; i >= 0; --i) {
+        if (recorded[i].pitch === pitch)
+          break;
+      }
+      recorded[i].duration = curTime - recorded[i].start;
+  };
     // Send the note off message for the pitch
-    MIDI.noteOff(0, pitch);
+  MIDI.noteOff(0, pitch);
 
   //Mark this note as released
   pressed[key_number] = false;
   //Record the note if needed
-  if (recording) {
-    var i;
-    for (i = recorded.length - 1; i >= 0; --i) {
-      if (recorded[i].pitch === pitch)
-        break;
-    }
-    recorded[i].duration = performance.now() - recorded[i].start;
-    console.log(recorded);
-  }
-  console.log(recorded);
+  if (recording) fetchPitch(pitch);
   /*
    * You need to handle the chord mode here
    */
   if (document.getElementById("play-mode-major").checked) {
-    if (pitch+4	 <= 108)
+    if (pitch+4	 <= 108) {
       MIDI.noteOff(0, pitch + 4);
       pressed[key_number+4] = false;
-    if (pitch+7 <= 108)
+      fetchPitch(pitch + 4);
+    }
+    if (pitch+7 <= 108) {
       MIDI.noteOff(0, pitch + 7);
       pressed[key_number+7] = false;
+      fetchPitch(pitch + 7);
+    }
   } else if (document.getElementById("play-mode-minor").checked) {
-    if (pitch+3 <= 108)
+    if (pitch+3 <= 108) {
       MIDI.noteOff(0, pitch + 3);
       pressed[key_number+3] = false;
-    if (pitch+7 <= 108)
+      fetchPitch(pitch + 3);
+    }
+    if (pitch+7 <= 108) {
       MIDI.noteOff(0, pitch + 7);
       pressed[key_number+7] = false;
+      fetchPitch(pitch + 7);
+    }
   }
 }
 
@@ -211,7 +230,18 @@ $(document).ready(function() {
     $("input[name='recording']").change(startRecord);
     $("button[name='exportbutton']").click(exportRecorded);
     $("button[name='processbutton']").click(playImported);
-
+    /*$("input[id='impJson']").click(() => {
+      try {
+        var fullPath = $(this).files[0].name;
+        var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+        var filename = fullPath.substring(startIndex);
+        if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
+        filename = filename.substring(1);
+        alert(filename);
+        }
+      }
+      catch {console.log("lol");}
+    });*/
     // Set up key events
           $(document).keydown(handlePageKeyDown);
           $(document).keyup(handlePageKeyUp);
