@@ -42,7 +42,7 @@ function render(){
 		requestAnimationFrame(render);
 	}
 }
-
+/* Legacy playback system
 function playRecorded(playMe){
 	for (var i = 0; i < playMe.length; ++i) {
 		if (playMe[i][0]) {
@@ -52,6 +52,7 @@ function playRecorded(playMe){
 		}
 	}
 }
+*/
 
 function exportRecorded(){
 	if (recorded.length > 0) {
@@ -86,8 +87,7 @@ function playImported() {
 			return function (e) {
 				try {
 					var midiData = JSON.parse(e.target.result);
-					playing = true;
-					ctx.clear();
+					playing = true;	//Moved ctx.clear to processJSON - we don't want to reset the canvas if the JSON parse failed
 					processJSON(midiData);
 				} catch (ex) {
 					alert('Error when parsing JSON!' + ex);
@@ -104,7 +104,12 @@ function playImported() {
 //dealing with delay first
 const delay = ms => new Promise (res=>setTimeout(res, ms));
 const processJSON = async(json) => {
-	var lowestPitch = parseInt($("#lowestPitch").val())
+	ctx.moveTo(recordPosition,0);	//Instead of clearing the canvas we draw a line to mark the start of playback - maybe we should make the line a different color for recording and playback
+	ctx.lineTo(recordPosition,height);
+	ctx.stroke();
+	playing = true;
+	render();
+	var lowestPitch = parseInt($("#lowestPitch").val());
 	for (var i = 0; i < json.length; ++i) {
 		pressed[json[i].pitch - lowestPitch] = true;
 		MIDI.noteOn(0, json[i].pitch, json[i].vol);
@@ -115,4 +120,5 @@ const processJSON = async(json) => {
 			await delay(json[i + 1].start - json[i].start - json[i].duration);
 		}
 	}
+	playing = false;
 }
