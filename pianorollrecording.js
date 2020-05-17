@@ -87,7 +87,7 @@ function playImported() {
 				try {
 					var midiData = JSON.parse(e.target.result);
 					playing = true;
-					ctx.clear();
+					
 					processJSON(midiData);
 				} catch (ex) {
 					alert('Error when parsing JSON!' + ex);
@@ -106,8 +106,21 @@ const delay = ms => new Promise (res=>setTimeout(res, ms));
 const processJSON = async(json) => {
 	var lowestPitch = parseInt($("#lowestPitch").val())
 	for (var i = 0; i < json.length; ++i) {
+		var tempo = document.getElementById("tempo-multiplier").value;
+		var pitchbend = document.getElementById("pitch-bend").value;
+		console.log(json[i].duration);
+		if(pitchbend != 60){
+			json[i].pitch = pitchbend;
+		}
+		
+		json[i].duration = json[i].duration *tempo;
+		console.log(json[i].duration);
 		pressed[json[i].pitch - lowestPitch] = true;
-		MIDI.noteOn(0, json[i].pitch, json[i].vol);
+		var inst = document.getElementById("instrumentSelect").value;
+		MIDI.programChange(0,inst);
+		var vel = document.getElementById("velocity").value;
+		MIDI.noteOn(0, json[i].pitch, vel);
+		//MIDI.noteOn(0, json[i].pitch, json[i].vol);
 		await delay(json[i].duration);
 		pressed[json[i].pitch - lowestPitch] = false;
 		MIDI.noteOff(0, json[i].pitch);
