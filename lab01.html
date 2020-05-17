@@ -33,6 +33,7 @@
       .white-key { width: 40px; height: 250px; border: 1px solid gray; background: white; line-height: 460px; }
       .black-key { margin: 0 5px; width: 30px; height: 160px; border: 1px solid black; background: black; color: white; line-height: 280px; }
       .spacer { width: 20px; float: left; }
+      .sml-btn { width: 50px; padding: 5px;}
     </style>
   </head>
   <body>
@@ -111,7 +112,7 @@
 					<option value="48">String Ensemble 1</option>
 					<option value="73">Flute</option>
 					<option value="71">Clarinet</option>
-					
+
 				</select>
           </div>
         </div>
@@ -135,8 +136,14 @@
 		<div class="col-6">
 			<label for="importexport">Import/Export:</label>
 				<div class="input-group">
-					<button name="exportbutton" class="btn btn-primary">Export</button>
-					<button name="importbutton" class="btn btn-primary">Import</button>
+          <div class="buttons">
+            <button name="exportbutton" class="btn btn-primary btn-sm" id="exp-btn">Export</button>
+            <button name="processbutton" class="btn btn-primary btn-sm" id="imp-btn">Process</button>
+          </div>
+          <div class="custom-file">
+            <input type="file" class="custom-file-input" id="impJson" accept="application/json"></button>
+            <label class="custom-file-label" for="impJson">Choose file</label>
+          </div>
 				</div>
 		</div>
 	</div>
@@ -171,13 +178,13 @@
 			<div class="spacer">&nbsp;</div>
 			<button type="button" class="black-key" id="key-1">s</button>
 			<button type="button" class="black-key" id="key-3">d</button>
-			
+
 			<div class="spacer">&nbsp;</div>
 			<div class="spacer">&nbsp;</div>
 			<button type="button" class="black-key" id="key-6">g</button>
 			<button type="button" class="black-key" id="key-8">h</button>
 			<button type="button" class="black-key" id="key-10">j</button>
-			
+
 			<div class="spacer">&nbsp;</div>
 			<div class="spacer">&nbsp;</div>
 			<button type="button" class="black-key" id="key-13">2</button>
@@ -196,10 +203,10 @@
 			<button type="button" class="black-key" id="key-30">=</button>
         </div>
       </div>
-	  
-	  
+
+
 		<div class="outputcanvas">
-			<canvas id="output" width="760" height="400"></canvas>
+			<canvas id="output" width="760" height="400" style="border: 1px solid black;"></canvas>
 		</div>
 
     </div>
