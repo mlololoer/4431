@@ -6,6 +6,8 @@ var recordPosition = width*3/4; //where the note should start entering
 var playPosition = width/4;
 var noteHeight = height/88; //height of a single note in the canvas
 var moveOffset = 2; //speed of the canvas moving left
+
+
 ctx.fillStyle = "gray"; //fill background
 ctx.fillRect(0,0,width,height);
 ctx.fillStyle = "blue"; //color of the notes will be blue
@@ -28,6 +30,25 @@ function startRecord() {
 	} else {
 		recording = false;
 	}
+}
+
+
+function colorHandler(){
+	var backgroundColor;	var noteColor;
+	switch($("#colorSelect").val()) {
+		case "defaultblue":{backgroundColor = "grey"; noteColor = "blue"; break;}
+		case "defaultred":{backgroundColor = "grey"; noteColor = "red"; break;}
+		case "defaultgreen":{backgroundColor = "grey"; noteColor = "green"; break;}
+		case "defaultyellow":{backgroundColor = "grey"; noteColor = "yellow"; break;}
+		case "sunset": {backgroundColor = "#7772B6"; noteColor = "#F7987F"; break;}
+		case "ocean":  {backgroundColor = "#136ADD"; noteColor = "#86C6E6"; break;}
+		case "map":  {backgroundColor = "#405DD7"; noteColor = "#64FC59"; break;}
+		case "greyscale": {backgroundColor = "#444444"; noteColor = "#BBBBBB"; break;}
+		case "BandW": {backgroundColor = "black"; noteColor = "white"; break;}
+	}
+	ctx.fillStyle = backgroundColor; //fill background
+	ctx.fillRect(0,0,width,height);
+	ctx.fillStyle = noteColor; //color of the notes will be blue
 }
 
 function render(){
@@ -169,3 +190,6 @@ const processJSON = async(json) => {
 	}
 	playing = false;
 }
+
+
+
