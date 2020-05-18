@@ -176,7 +176,7 @@
 				<div class="input-group">
           <div class="buttons">
             <button name="exportbutton" class="btn btn-primary" id="exp-btn">Export</button>
-            <button name="processbutton" class="btn btn-primary" id="imp-btn">Process</button>
+            <button name="processbutton" class="btn btn-primary" id="imp-btn">Play File</button>
           </div>
           <div class="custom-file">
             <input type="file" class="custom-file-input" id="impJson" accept="application/json"></button>
@@ -185,24 +185,58 @@
 				</div>
 		</div>
   </div>
+  
   <div class="btn-group-toggle" data-toggle="buttons">
     <label class="btn btn-secondary active">
-      <input type="checkbox" id = "customizer"checked autocomplete="off"> Customizer:
+      <input type="checkbox" id = "customizer"checked autocomplete="off"> Customizer On/Off
     </label>
   </div>
 	
-
-  <div class="row mb-6">
+	<div class="row mb-9">
+  <div class="col mb-3">
     <label for="tempo-multiplier">Tempo Multiplier:</label>
-  <input type="range" class="custom-range" min="0.5" max="2" value="1" step="0.1" id="tempo-multiplier">
+	<div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text">0.5x</span>
+            </div>
+            <div class="row flex-fill align-items-center mx-0 px-2 border">
+              <input type="range" class="custom-range" min="0.5" max="2" value="1" step="0.1" id="tempo-multiplier">
+            </div>
+            <div class="input-group-append">
+              <span class="input-group-text">2x</span>
+		</div>
+	</div>
+  
   </div>
-  <div class="row mb-6">
+  <div class="col mb-3">
     <label for="pitch-bend">Pitch Bend:</label>
-  <input type="range" class="custom-range" min="-12" max="12" value="0" id="pitch-bend">
+	<div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text">-12</span>
+            </div>
+            <div class="row flex-fill align-items-center mx-0 px-2 border">
+              <input type="range" class="custom-range" min="-12" max="12" value="0" id="pitch-bend">
+            </div>
+            <div class="input-group-append">
+              <span class="input-group-text">12</span>
+		</div>
+	</div>
   </div>
-  <div class="row mb-6">
+  <div class="col mb-3">
     <label for="velocity">Note Velocity:</label>
-  <input type="range" class="custom-range" min="0" max="127" value="100" id="velocity">
+	<div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text">0%</span>
+            </div>
+            <div class="row flex-fill align-items-center mx-0 px-2 border">
+              <input type="range" class="custom-range" min="0" max="1" value="1" step="0.05" id="velocity">
+            </div>
+            <div class="input-group-append">
+              <span class="input-group-text">100%</span>
+		</div>
+	</div>
+  
+  </div>
   </div>
 	<p></p>
       <div class="keyboard">

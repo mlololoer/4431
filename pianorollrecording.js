@@ -133,24 +133,22 @@ const processJSON = async(json) => {
 	render();
 	var lowestPitch = parseInt($("#lowestPitch").val());
 	for (var i = 0; i < json.length; ++i) {
-		pressed[json[i].pitch - lowestPitch] = true;
 		var inst = parseInt($("#instrumentSelect").val());
-		if(document.getElementById("customizer").checked){
-			json[i].pitch += parseInt($("#pitch-bend").val());
+		var customized = document.getElementById("customizer").checked;
+		
+		var pitchBend = parseInt($("#pitch-bend").val());
+		var velocity = parseFloat($("#velocity").val());
+		var tempoMultiplier = 1/parseFloat($("#tempo-multiplier").val());
 		
 		
-		json[i].duration = json[i].duration *parseInt($("#tempo-multiplier").val());
-		json[i].start = json[i].start *parseInt($("#tempo-multiplier").val());
 		MIDI.programChange(0,inst);
-		MIDI.noteOn(0, json[i].pitch, parseInt($("#velocity").val()));
-		var jump = false;
-		}
-		else {
+		if (customized) {
+			MIDI.noteOn(0,json[i].pitch+pitchBend, json[i].vol*velocity);
+			pressed[json[i].pitch +pitchBend - lowestPitch] = true;
+		} else {
 			MIDI.noteOn(0, json[i].pitch, json[i].vol);
-		var jump = false;
+			pressed[json[i].pitch - lowestPitch] = true;
 		}
-		// 	json[i].pitch += parseInt($("#pitch-bend").val());
-		
 		
 		// json[i].duration = json[i].duration *parseInt($("#tempo-multiplier").val());
 		// json[i].start = json[i].start *parseInt($("#tempo-multiplier").val());
@@ -158,37 +156,58 @@ const processJSON = async(json) => {
 		// MIDI.noteOn(0, json[i].pitch, parseInt($("#velocity").val()));
 		// var jump = false;
 		//blah
+		var jump = false;
 		if (json[i].type === 1 || json[i].type === 2) {
-			if(document.getElementById("customizer").checked){
-				MIDI.noteOn(0, json[i + 1].pitch, parseInt($("#velocity").val()));
-				MIDI.noteOn(0, json[i + 2].pitch, parseInt($("#velocity").val()));
+			if(customized){
+				MIDI.noteOn(0, json[i + 1].pitch+pitchBend, json[i+1].vol*velocity);
+				MIDI.noteOn(0, json[i + 2].pitch+pitchBend, json[i+2].vol*velocity);
+				pressed[json[i + 1].pitch+pitchBend - lowestPitch] = true;
+				pressed[json[i + 2].pitch+pitchBend - lowestPitch] = true;
 			}else {
-				MIDI.noteOn(0, json[i + 1].pitch, json[i].vol);
-				MIDI.noteOn(0, json[i + 2].pitch, json[i].vol);
+				MIDI.noteOn(0, json[i + 1].pitch, json[i+1].vol);
+				MIDI.noteOn(0, json[i + 2].pitch, json[i+2].vol);
+				pressed[json[i + 1].pitch - lowestPitch] = true;
+				pressed[json[i + 2].pitch - lowestPitch] = true;
 			}
-			
-			pressed[json[i + 1].pitch - lowestPitch] = true;
-			pressed[json[i + 2].pitch - lowestPitch] = true;
 			jump = true;
 		}
-		await delay(json[i].duration);
-		pressed[json[i].pitch - lowestPitch] = false;
-		MIDI.noteOff(0, json[i].pitch);
-
-		if (json[i].type === 1 || json[i].type === 2) {
-			MIDI.noteOff(0, json[i + 1].pitch);
-			MIDI.noteOff(0, json[i + 2].pitch);
-			pressed[json[i + 1].pitch - lowestPitch] = false;
-			pressed[json[i + 2].pitch - lowestPitch] = false;
+		
+		if (customized) await delay(json[i].duration*tempoMultiplier);
+		else await delay(json[i].duration)
+		
+		if (customized) {
+			MIDI.noteOff(0, json[i].pitch+pitchBend);
+			pressed[json[i].pitch+pitchBend - lowestPitch] = false;
+			if (json[i].type === 1 || json[i].type === 2) {
+				MIDI.noteOff(0, json[i + 1].pitch+pitchBend);
+				MIDI.noteOff(0, json[i + 2].pitch+pitchBend);
+				pressed[json[i + 1].pitch+pitchBend - lowestPitch] = false;
+				pressed[json[i + 2].pitch+pitchBend - lowestPitch] = false;
+			}
+		} else {
+			MIDI.noteOff(0, json[i].pitch);
+			pressed[json[i].pitch - lowestPitch] = false;
+			if (json[i].type === 1 || json[i].type === 2) {
+				MIDI.noteOff(0, json[i + 1].pitch);
+				MIDI.noteOff(0, json[i + 2].pitch);
+				pressed[json[i + 1].pitch - lowestPitch] = false;
+				pressed[json[i + 2].pitch - lowestPitch] = false;
+			}
 		}
+		
 		if (i < json.length - 1) {
 			if (jump && i < json.length - 3) {
-				await delay(json[i + 3].start - json[i].start - json[i].duration);
+				if (customized) await delay(tempoMultiplier*(json[i + 3].start - json[i].start - json[i].duration));
+				else await delay(json[i + 3].start - json[i].start - json[i].duration);				
 			}
-			else await delay(json[i + 1].start - json[i].start - json[i].duration);
+			else {
+				if (customized) await delay(tempoMultiplier*(json[i + 1].start - json[i].start - json[i].duration));
+				else await delay(json[i + 1].start - json[i].start - json[i].duration);
+			}
 		}
 		if (jump) i += 2;
 	}
+	for (var i = 0; i < 32; ++i) pressed[i] = false;
 	playing = false;
 }
 
