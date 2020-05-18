@@ -157,6 +157,7 @@ const processJSON = async(json) => {
 		// MIDI.programChange(0,inst);
 		// MIDI.noteOn(0, json[i].pitch, parseInt($("#velocity").val()));
 		// var jump = false;
+		//blah
 		if (json[i].type === 1 || json[i].type === 2) {
 			if(document.getElementById("customizer").checked){
 				MIDI.noteOn(0, json[i + 1].pitch, parseInt($("#velocity").val()));
