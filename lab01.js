@@ -91,23 +91,23 @@ function handleNoteOff(key_number) {
     if (pitch+4	 <= 108) {
       MIDI.noteOff(0, pitch + 4);
       pressed[key_number+4] = false;
-      fetchPitch(pitch + 4);
+      if (recording) fetchPitch(pitch + 4);
     }
     if (pitch+7 <= 108) {
       MIDI.noteOff(0, pitch + 7);
       pressed[key_number+7] = false;
-      fetchPitch(pitch + 7);
+      if (recording) fetchPitch(pitch + 7);
     }
   } else if (document.getElementById("play-mode-minor").checked) {
     if (pitch+3 <= 108) {
       MIDI.noteOff(0, pitch + 3);
       pressed[key_number+3] = false;
-      fetchPitch(pitch + 3);
+      if (recording) fetchPitch(pitch + 3);
     }
     if (pitch+7 <= 108) {
       MIDI.noteOff(0, pitch + 7);
       pressed[key_number+7] = false;
-      fetchPitch(pitch + 7);
+      if (recording) fetchPitch(pitch + 7);
     }
   }
 }
@@ -231,11 +231,11 @@ $(document).ready(function() {
     $("input[name='recording']").change(startRecord);
     $("button[name='exportbutton']").click(exportRecorded);
     $("button[name='processbutton']").click(playImported);
-	
+
 	//handle piano roll settings dialog box
 	$("#colorSelect").change(colorHandler);
-	
-	
+
+
     /*$("input[id='impJson']").click(() => {
       try {
         var fullPath = $(this).files[0].name;
