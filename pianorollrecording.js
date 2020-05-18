@@ -113,11 +113,38 @@ const processJSON = async(json) => {
 	var lowestPitch = parseInt($("#lowestPitch").val());
 	for (var i = 0; i < json.length; ++i) {
 		pressed[json[i].pitch - lowestPitch] = true;
-		MIDI.noteOn(0, json[i].pitch, json[i].vol);
+		var inst = parseInt($("#instrumentSelect").val());
+		if(document.getElementById("customizer").checked){
+			json[i].pitch += parseInt($("#pitch-bend").val());
+		
+		
+		json[i].duration = json[i].duration *parseInt($("#tempo-multiplier").val());
+		json[i].start = json[i].start *parseInt($("#tempo-multiplier").val());
+		MIDI.programChange(0,inst);
+		MIDI.noteOn(0, json[i].pitch, parseInt($("#velocity").val()));
 		var jump = false;
+		}
+		else {
+			MIDI.noteOn(0, json[i].pitch, json[i].vol);
+		var jump = false;
+		}
+		// 	json[i].pitch += parseInt($("#pitch-bend").val());
+		
+		
+		// json[i].duration = json[i].duration *parseInt($("#tempo-multiplier").val());
+		// json[i].start = json[i].start *parseInt($("#tempo-multiplier").val());
+		// MIDI.programChange(0,inst);
+		// MIDI.noteOn(0, json[i].pitch, parseInt($("#velocity").val()));
+		// var jump = false;
 		if (json[i].type === 1 || json[i].type === 2) {
-			MIDI.noteOn(0, json[i + 1].pitch, json[i].vol);
-			MIDI.noteOn(0, json[i + 2].pitch, json[i].vol);
+			if(document.getElementById("customizer").checked){
+				MIDI.noteOn(0, json[i + 1].pitch, parseInt($("#velocity").val()));
+				MIDI.noteOn(0, json[i + 2].pitch, parseInt($("#velocity").val()));
+			}else {
+				MIDI.noteOn(0, json[i + 1].pitch, json[i].vol);
+				MIDI.noteOn(0, json[i + 2].pitch, json[i].vol);
+			}
+			
 			pressed[json[i + 1].pitch - lowestPitch] = true;
 			pressed[json[i + 2].pitch - lowestPitch] = true;
 			jump = true;
