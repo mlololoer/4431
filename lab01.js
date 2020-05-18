@@ -181,6 +181,7 @@ function instrumentHandler(){
 MIDI.programChange(0, parseInt($("#instrumentSelect").val()));
 }
 
+
 $(document).ready(function() {
   // Show a loading window
   //$("#loading").modal({ backdrop: "static", keyboard: false, show: true });
@@ -230,6 +231,11 @@ $(document).ready(function() {
     $("input[name='recording']").change(startRecord);
     $("button[name='exportbutton']").click(exportRecorded);
     $("button[name='processbutton']").click(playImported);
+	
+	//handle piano roll settings dialog box
+	$("#colorSelect").change(colorHandler);
+	
+	
     /*$("input[id='impJson']").click(() => {
       try {
         var fullPath = $(this).files[0].name;

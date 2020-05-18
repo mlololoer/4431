@@ -118,7 +118,7 @@
         </div>
       </div>
 	<div class="row mb-6">
-		<div class="col-6">
+		<div class="col-3">
 			<label for="record">Recording:</label>
 				<div class="input-group">
 				<div class="btn-group btn-group-toggle" data-toggle="buttons">
@@ -133,12 +133,50 @@
 				</div>
 			</div>
 		</div>
+		<div class="col-3">
+			<label for="rollSettings">Piano Roll View:</label>
+			<input type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" value="Settings"></input>
+					<!-- Modal -->
+					<div id="myModal" class="modal fade" role="dialog">
+					  <div class="modal-dialog">
+
+						<!-- Modal content-->
+						<div class="modal-content">
+						  <div class="modal-header">
+							<h4 class="modal-title">Piano Roll View Settings</h4>
+						  </div>
+						  <div class="modal-body">
+								<label>Background color:</label>
+								<div class="input-group">
+									<select class="custom-select" id="colorSelect">
+										<option value="defaultblue">Default - Blue</option>
+										<option value="defaultred">Default - Red</option>
+										<option value="defaultgreen">Default - Green</option>
+										<option value="defaultyellow">Default - Yellow</option>
+										<option value="sunset">Sunset</option>
+										<option value="ocean">Ocean</option>
+										<option value="map">Map</option>
+										<option value="greyscale">Greyscale</option>
+										<option value="BandW">Black and White</option>
+									</select>
+							  </div>
+							  <p>Note: Changing the color will clear whatever is on the piano roll!</p>
+						  </div>
+						  <div class="modal-footer">
+							<input type="button" class="btn btn-default" data-dismiss="modal" value="Close"></input>
+						  </div>
+						</div>
+
+					  </div>
+					</div>
+			
+		</div>
 		<div class="col-6">
 			<label for="importexport">Import/Export:</label>
 				<div class="input-group">
           <div class="buttons">
-            <button name="exportbutton" class="btn btn-primary btn-sm" id="exp-btn">Export</button>
-            <button name="processbutton" class="btn btn-primary btn-sm" id="imp-btn">Process</button>
+            <button name="exportbutton" class="btn btn-primary" id="exp-btn">Export</button>
+            <button name="processbutton" class="btn btn-primary" id="imp-btn">Process</button>
           </div>
           <div class="custom-file">
             <input type="file" class="custom-file-input" id="impJson" accept="application/json"></button>
