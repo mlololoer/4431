@@ -33,7 +33,6 @@ function startRecord() {
 }
 
 function customizerChange() {
-	console.log("lol");
 	if (document.getElementById("cust-on").checked) {
 		customized = true;
 	}
@@ -95,7 +94,6 @@ function exportRecorded(){
 		for (var i = 0; i < recorded.length; ++i) {
 			recorded[i].start -= timeDelay;
 		}
-		console.log(recorded);
 		var new_json = JSON.stringify(recorded);
 
 		element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(new_json));
