@@ -233,7 +233,7 @@ $(document).ready(function() {
     $("button[name='processbutton']").click(playImported);
 	//handle piano roll settings dialog box
 	  $("#colorSelect").change(colorHandler);
-
+	  $("#speedSelect").change(speedHandler);
 
     // Set up key events
     $(document).keydown(handlePageKeyDown);

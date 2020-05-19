@@ -60,6 +60,10 @@ function colorHandler(){
 	ctx.fillStyle = noteColor; //color of the notes will be blue
 }
 
+function speedHandler(){
+	moveOffset=$("#speedSelect").val();
+}
+
 function render(){
 	if (recording || playing) {
 		var lowestPitch = parseInt($("#lowestPitch").val())

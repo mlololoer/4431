@@ -146,7 +146,7 @@
 							<h4 class="modal-title">Piano Roll View Settings</h4>
 						  </div>
 						  <div class="modal-body">
-								<label>Background color:</label>
+								<label><h6>Background color:</h6></label>
 								<div class="input-group">
 									<select class="custom-select" id="colorSelect">
 										<option value="defaultblue">Default - Blue</option>
@@ -161,6 +161,11 @@
 									</select>
 							  </div>
 							  <p>Note: Changing the color will clear whatever is on the piano roll!</p>
+							  <label><h6>Piano Roll Scrolling Speed:</h6></label>
+								<div class="input-group">
+									<input type="number" value="2" min="1" max="10" step="1" id="speedSelect"/>
+							  </div>
+							  
 						  </div>
 						  <div class="modal-footer">
 							<input type="button" class="btn btn-default" data-dismiss="modal" value="Close"></input>
@@ -334,6 +339,7 @@
     <!-- the lab JavaScript -->
 	<script src="lab01.js" type="text/javascript"></script>
 	<script src="pianorollrecording.js" type="text/javascript"></script>
+	<script src="bootstrap-input-spinner.js"></script>
 
   </body>
 </html>
