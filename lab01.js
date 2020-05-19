@@ -231,31 +231,13 @@ $(document).ready(function() {
     $("input[name='recording']").change(startRecord);
     $("button[name='exportbutton']").click(exportRecorded);
     $("button[name='processbutton']").click(playImported);
-
 	//handle piano roll settings dialog box
-	$("#colorSelect").change(colorHandler);
+	  $("#colorSelect").change(colorHandler);
 
 
-    /*$("input[id='impJson']").click(() => {
-      try {
-        var fullPath = $(this).files[0].name;
-        var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
-        var filename = fullPath.substring(startIndex);
-        if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
-        filename = filename.substring(1);
-        alert(filename);
-        }
-      }
-      catch {console.log("lol");}
-    });*/
     // Set up key events
-          $(document).keydown(handlePageKeyDown);
-          $(document).keyup(handlePageKeyUp);
-
-
-    /*
-           * You need to set up the event for the instrument
-           */
+    $(document).keydown(handlePageKeyDown);
+    $(document).keyup(handlePageKeyUp);
     $("#instrumentSelect").change(instrumentHandler);
 
       }

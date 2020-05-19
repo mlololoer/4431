@@ -6,7 +6,7 @@ var recordPosition = width*3/4; //where the note should start entering
 var playPosition = width/4;
 var noteHeight = height/88; //height of a single note in the canvas
 var moveOffset = 2; //speed of the canvas moving left
-
+var customized = false;
 
 ctx.fillStyle = "gray"; //fill background
 ctx.fillRect(0,0,width,height);
@@ -32,6 +32,15 @@ function startRecord() {
 	}
 }
 
+function customizerChange() {
+	console.log("lol");
+	if (document.getElementById("cust-on").checked) {
+		customized = true;
+	}
+	else {
+		customized = false;
+	}
+}
 
 function colorHandler(){
 	var backgroundColor;	var noteColor;
@@ -101,7 +110,7 @@ function exportRecorded(){
 
 function playImported() {
 	var files = document.getElementById("impJson").files;
-	var path = files[0].name;
+	try {var path = files[0].name;} catch {alert("Import JSON file with MIDI instructions first!"); return;}
 	var midiData = [];
 	if (files.length !== 0) {
 		var reader = new FileReader();
@@ -134,13 +143,13 @@ const processJSON = async(json) => {
 	var lowestPitch = parseInt($("#lowestPitch").val());
 	for (var i = 0; i < json.length; ++i) {
 		var inst = parseInt($("#instrumentSelect").val());
-		var customized = document.getElementById("customizer").checked;
-		
+		//var customized = document.getElementById("customizer").checked;
+
 		var pitchBend = parseInt($("#pitch-bend").val());
 		var velocity = parseFloat($("#velocity").val());
 		var tempoMultiplier = 1/parseFloat($("#tempo-multiplier").val());
-		
-		
+
+
 		MIDI.programChange(0,inst);
 		if (customized) {
 			MIDI.noteOn(0,json[i].pitch+pitchBend, json[i].vol*velocity);
@@ -149,13 +158,8 @@ const processJSON = async(json) => {
 			MIDI.noteOn(0, json[i].pitch, json[i].vol);
 			pressed[json[i].pitch - lowestPitch] = true;
 		}
-		
-		// json[i].duration = json[i].duration *parseInt($("#tempo-multiplier").val());
-		// json[i].start = json[i].start *parseInt($("#tempo-multiplier").val());
-		// MIDI.programChange(0,inst);
-		// MIDI.noteOn(0, json[i].pitch, parseInt($("#velocity").val()));
-		// var jump = false;
-		//blah
+
+
 		var jump = false;
 		if (json[i].type === 1 || json[i].type === 2) {
 			if(customized){
@@ -171,10 +175,10 @@ const processJSON = async(json) => {
 			}
 			jump = true;
 		}
-		
+
 		if (customized) await delay(json[i].duration*tempoMultiplier);
 		else await delay(json[i].duration)
-		
+
 		if (customized) {
 			MIDI.noteOff(0, json[i].pitch+pitchBend);
 			pressed[json[i].pitch+pitchBend - lowestPitch] = false;
@@ -194,11 +198,11 @@ const processJSON = async(json) => {
 				pressed[json[i + 2].pitch - lowestPitch] = false;
 			}
 		}
-		
+
 		if (i < json.length - 1) {
 			if (jump && i < json.length - 3) {
 				if (customized) await delay(tempoMultiplier*(json[i + 3].start - json[i].start - json[i].duration));
-				else await delay(json[i + 3].start - json[i].start - json[i].duration);				
+				else await delay(json[i + 3].start - json[i].start - json[i].duration);
 			}
 			else {
 				if (customized) await delay(tempoMultiplier*(json[i + 1].start - json[i].start - json[i].duration));
@@ -210,6 +214,3 @@ const processJSON = async(json) => {
 	for (var i = 0; i < 32; ++i) pressed[i] = false;
 	playing = false;
 }
-
-
-

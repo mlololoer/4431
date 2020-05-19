@@ -26,7 +26,7 @@
 
     <style>
       body { min-width: 590px; }
-      .container { min-width: 590px; width: 760px; margin-top: 10px }
+      .container { min-width: 590px; width: 950px; margin-top: 10px }
       .keyboard { float: left; position: relative; width: 762px; height: 252px; border: 1px solid lightgray; background: lightgray; }
       .white-keys, .black-keys { position: absolute; }
       .white-key, .black-key { float: left; border-radius: 4px; }
@@ -135,7 +135,7 @@
 		</div>
 		<div class="col-3">
 			<label for="rollSettings">Piano Roll View:</label>
-			<input type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" value="Settings"></input>
+			<input type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal" value="Settings" width = "96.04"></input>
 					<!-- Modal -->
 					<div id="myModal" class="modal fade" role="dialog">
 					  <div class="modal-dialog">
@@ -169,7 +169,7 @@
 
 					  </div>
 					</div>
-			
+
 		</div>
 		<div class="col-6">
 			<label for="importexport">Import/Export:</label>
@@ -185,13 +185,24 @@
 				</div>
 		</div>
   </div>
-  
-  <div class="btn-group-toggle" data-toggle="buttons">
-    <label class="btn btn-secondary active">
-      <input type="checkbox" id = "customizer"checked autocomplete="off"> Customizer On/Off
-    </label>
+
+  <div class="row mb-9">
+      <div class="col-3">
+        <label for="customizer">Customizer:</label>
+          <div class="input-group">
+          <div class="btn-group btn-group-toggle" data-toggle="buttons">
+            <label class="btn btn-primary">
+              <input type="radio" name="customizer" id="cust-on" value="off" autocomplete="off" onchange="customizerChange();">
+              On
+            </label>
+            <label class="btn btn-primary active">
+              <input type="radio" name="customizer" id="cust-off" value="on" autocomplete="off" checked="" onchange="customizerChange();">
+              Off
+            </label>
+          </div>
+        </div>
+      </div>
   </div>
-	
 	<div class="row mb-9">
   <div class="col mb-3">
     <label for="tempo-multiplier">Tempo Multiplier:</label>
@@ -206,7 +217,7 @@
               <span class="input-group-text">2x</span>
 		</div>
 	</div>
-  
+
   </div>
   <div class="col mb-3">
     <label for="pitch-bend">Pitch Bend:</label>
@@ -235,7 +246,7 @@
               <span class="input-group-text">100%</span>
 		</div>
 	</div>
-  
+
   </div>
   </div>
 	<p></p>
