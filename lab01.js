@@ -11,7 +11,7 @@ var key_mapping = {
 }
 //Keys that are currently pressed - true=pressed, false=not pressed
 var pressed = [];
-for (var i = 0; i < 32; ++i) pressed[i] = false;
+for (var i = 0; i < 88; ++i) pressed[i] = false; //88 possible values
 
 var timeStart; //This will store the time that a recording has started. It will be used to calculate note timings and durations later when recording
 
@@ -20,7 +20,7 @@ var recorded = []; //An array that will store each note that has been recorded i
 var recording = false; //Keeps track of whether we are recording right now or not. Used in handleNoteOn and handleNoteOff to control whether we write down each note's press or release to the recorded array.
 
 function handleNoteOn(key_number) {
-if (pressed[key_number]) return;
+if (pressed[pitch]) return;
   // Find the pitch
   const push = (amplitude, pitch, timeStamp, duration, type) => {
     recorded.push({'vol': amplitude, 'pitch': pitch, 'start': timeStamp, 'duration': duration, 'type': type})
@@ -29,7 +29,7 @@ if (pressed[key_number]) return;
   var amplitude = parseInt($("#amplitude").val());
   var timeStamp = performance.now()
   MIDI.noteOn(0, pitch, amplitude);
-  pressed[key_number] = true;
+  pressed[pitch] = true;
   if (recording) push(amplitude, pitch, timeStamp, 0, document.getElementById("play-mode-major").checked ? 1 : (document.getElementById("play-mode-minor").checked ? 2 : 0));
     /*
     * You need to handle the chord mode here
@@ -37,33 +37,34 @@ if (pressed[key_number]) return;
   if (document.getElementById("play-mode-major").checked) {
     if (pitch+4 <= 108) {
       MIDI.noteOn(0, pitch + 4, amplitude);
-      pressed[key_number+4] = true;
+      pressed[pitch+4] = true;
       if (recording) push(amplitude, pitch + 4, timeStamp, 0, 1);
     }
     if (pitch+7 <= 108) {
       MIDI.noteOn(0, pitch + 7, amplitude);
-      pressed[key_number+7] = true;
+      pressed[pitch+7] = true;
       if (recording) push(amplitude, pitch + 7, timeStamp, 0, 1);
     }
   } else if (document.getElementById("play-mode-minor").checked) {
     if (pitch+3 <= 108) {
       MIDI.noteOn(0, pitch + 3, amplitude);
-      pressed[key_number+3] = true;
+      pressed[pitch + 3] = true;
       if (recording) push(amplitude, pitch + 3, timeStamp, 0, 2);
     }
     if (pitch+7 <= 108) {
       MIDI.noteOn(0, pitch + 7, amplitude);
-      pressed[key_number+7] = true;
+      pressed[pitch+7] = true;
       if (recording) push(amplitude, pitch + 7, timeStamp, 0, 2);
     }
   }
 }
 
 function handleNoteOff(key_number) {
-  if (!pressed[key_number]) return;
+
 
     // Find the pitch
   var pitch = parseInt($("#lowestPitch").val()) + key_number;
+  if (!pressed[pitch]) return;
     /*
     * You need to use the slider to get the lowest pitch number above
     * rather than the hardcoded value
@@ -81,7 +82,7 @@ function handleNoteOff(key_number) {
   MIDI.noteOff(0, pitch);
 
   //Mark this note as released
-  pressed[key_number] = false;
+  pressed[pitch] = false;
   //Record the note if needed
   if (recording) fetchPitch(pitch);
   /*
@@ -90,23 +91,23 @@ function handleNoteOff(key_number) {
   if (document.getElementById("play-mode-major").checked) {
     if (pitch+4	 <= 108) {
       MIDI.noteOff(0, pitch + 4);
-      pressed[key_number+4] = false;
+      pressed[pitch+4] = false;
       if (recording) fetchPitch(pitch + 4);
     }
     if (pitch+7 <= 108) {
       MIDI.noteOff(0, pitch + 7);
-      pressed[key_number+7] = false;
+      pressed[pitch+7] = false;
       if (recording) fetchPitch(pitch + 7);
     }
   } else if (document.getElementById("play-mode-minor").checked) {
     if (pitch+3 <= 108) {
       MIDI.noteOff(0, pitch + 3);
-      pressed[key_number+3] = false;
+      pressed[pitch+3] = false;
       if (recording) fetchPitch(pitch + 3);
     }
     if (pitch+7 <= 108) {
       MIDI.noteOff(0, pitch + 7);
-      pressed[key_number+7] = false;
+      pressed[pitch+7] = false;
       if (recording) fetchPitch(pitch + 7);
     }
   }

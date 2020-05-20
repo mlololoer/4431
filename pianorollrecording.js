@@ -65,14 +65,13 @@ function speedHandler(){
 
 function render(){
 	if (recording || playing) {
-		var lowestPitch = parseInt($("#lowestPitch").val())
-		for (var i = 0; i < 32; ++i) {
+		for (var i = 0; i < 88; ++i) {
 			if(pressed[i]) {
 				if (customized) {
-					ctx.fillRect(recordPosition,(108-lowestPitch-parseInt($("#pitch-bend").val())-i)*noteHeight,moveOffset,noteHeight);
+					ctx.fillRect(recordPosition,(108-parseInt($("#pitch-bend").val())-i)*noteHeight,moveOffset,noteHeight);
 				}
 				else
-					ctx.fillRect(recordPosition,(108-lowestPitch-i)*noteHeight,moveOffset,noteHeight);
+					ctx.fillRect(recordPosition,(108-i)*noteHeight,moveOffset,noteHeight);
 			}
 		}
 		ctx.drawImage(ctx.canvas,moveOffset,0,width-moveOffset,height,0,0,width-moveOffset,height);
@@ -160,11 +159,11 @@ const processJSON = async(json) => {
 		if (customized) {
 			if (json[i].pitch+pitchBend <= 108 && json[i].pitch+pitchBend >= 21) {
 				MIDI.noteOn(0,json[i].pitch+pitchBend, json[i].vol*velocity);
-				pressed[json[i].pitch +pitchBend - lowestPitch] = true;
+				pressed[json[i].pitch +pitchBend] = true;
 			}
 		} else {
 			MIDI.noteOn(0, json[i].pitch, json[i].vol);
-			pressed[json[i].pitch - lowestPitch] = true;
+			pressed[json[i].pitch] = true;
 		}
 
 
@@ -173,17 +172,17 @@ const processJSON = async(json) => {
 			if(customized){
 				if (json[i + 1].pitch+pitchBend <= 108 && json[i + 1].pitch+pitchBend >= 21) {
 					MIDI.noteOn(0, json[i + 1].pitch+pitchBend, json[i+1].vol*velocity);
-					pressed[json[i + 1].pitch+pitchBend - lowestPitch] = true;
+					pressed[json[i + 1].pitch+pitchBend] = true;
 				}
 				if (json[i + 2].pitch+pitchBend <= 108 && json[i + 2].pitch+pitchBend >= 21) {
 					MIDI.noteOn(0, json[i + 2].pitch+pitchBend, json[i+2].vol*velocity);
-					pressed[json[i + 2].pitch+pitchBend - lowestPitch] = true;
+					pressed[json[i + 2].pitch+pitchBend] = true;
 				}
 			}else {
 				MIDI.noteOn(0, json[i + 1].pitch, json[i+1].vol);
-				pressed[json[i + 1].pitch - lowestPitch] = true;
+				pressed[json[i + 1].pitch] = true;
 				MIDI.noteOn(0, json[i + 2].pitch, json[i+2].vol);
-				pressed[json[i + 2].pitch - lowestPitch] = true;
+				pressed[json[i + 2].pitch] = true;
 			}
 			jump = true;
 		}
@@ -194,26 +193,26 @@ const processJSON = async(json) => {
 		if (customized) {
 			if (json[i].pitch+pitchBend <= 108 && json[i].pitch+pitchBend >= 21) {
 				MIDI.noteOff(0, json[i].pitch+pitchBend);
-				pressed[json[i].pitch+pitchBend - lowestPitch] = false;
+				pressed[json[i].pitch+pitchBend] = false;
 			}
 			if (json[i].type === 1 || json[i].type === 2) {
 				if (json[i + 1].pitch+pitchBend <= 108 && json[i + 1].pitch+pitchBend >= 21) {
 					MIDI.noteOff(0, json[i + 1].pitch+pitchBend);
-					pressed[json[i + 1].pitch+pitchBend - lowestPitch] = false;
+					pressed[json[i + 1].pitch+pitchBend] = false;
 				}
 				if (json[i + 2].pitch+pitchBend <= 108 && json[i + 2].pitch+pitchBend >= 21) {
 					MIDI.noteOff(0, json[i + 2].pitch+pitchBend);
-					pressed[json[i + 2].pitch+pitchBend - lowestPitch] = false;
+					pressed[json[i + 2].pitch+pitchBend] = false;
 				}
 			}
 		} else {
 			MIDI.noteOff(0, json[i].pitch);
-			pressed[json[i].pitch - lowestPitch] = false;
+			pressed[json[i].pitch] = false;
 			if (json[i].type === 1 || json[i].type === 2) {
 				MIDI.noteOff(0, json[i + 1].pitch);
 				MIDI.noteOff(0, json[i + 2].pitch);
-				pressed[json[i + 1].pitch - lowestPitch] = false;
-				pressed[json[i + 2].pitch - lowestPitch] = false;
+				pressed[json[i + 1].pitch] = false;
+				pressed[json[i + 2].pitch] = false;
 			}
 		}
 
@@ -229,6 +228,6 @@ const processJSON = async(json) => {
 		}
 		if (jump) i += 2;
 	}
-	for (var i = 0; i < 32; ++i) pressed[i] = false;
+	for (var i = 0; i < 88; ++i) pressed[i] = false;
 	playing = false;
 }
